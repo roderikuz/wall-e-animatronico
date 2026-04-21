@@ -105,4 +105,4 @@ void loop() {
   ws.cleanupClients(); // Limpia conexiones inactivas
 }
 
-//Esto es una prueba 
+//Esto es una prueba
