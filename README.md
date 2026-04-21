@@ -2,16 +2,6 @@
 
 Proyecto universitario de diseño mecatrónico. Animatrónico inspirado en Wall-E, controlado en tiempo real desde una app web a través de WiFi.
 
-## Equipo
-
-| Integrante | Área |
-|---|---|
-| [Nombre] | Control (app + comunicación) |
-| [Nombre] | Hardware (motores, servos, estructura) |
-| [Nombre] | [Área] |
-| [Nombre] | [Área] |
-| [Nombre] | [Área] |
-
 ## Arquitectura del sistema
 
 ```
