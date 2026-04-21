@@ -1,0 +1,52 @@
+# Fase 1 — Hello World WebSocket
+
+Prueba mínima de comunicación entre el celular y el ESP32 via WebSockets sobre WiFi local. Sin hardware adicional, sin servos. Solo la conexión.
+
+## Objetivo
+
+Validar que:
+- El ESP32 puede crear su propia red WiFi (Access Point)
+- El celular puede cargar una página web servida desde el ESP32
+- La comunicación WebSocket funciona en ambas direcciones
+- Los comandos llegan al ESP32 sin lag perceptible
+
+## Resultado esperado
+
+Al presionar el botón en la página web, el Serial Monitor del ESP32 imprime:
+
+```
+Comando recibido: PING
+```
+
+## Cómo probar
+
+1. Flashear el firmware al ESP32
+2. Abrir el Serial Monitor a **115200 baudios**
+3. Conectar el celular al WiFi `WallE-Control` (contraseña: `walle1234`)
+4. Abrir el navegador en `192.168.4.1`
+5. Presionar el botón
+
+## Dependencias
+
+```ini
+lib_deps =
+  https://github.com/me-no-dev/AsyncTCP.git
+  https://github.com/me-no-dev/ESPAsyncWebServer.git
+```
+
+## Estructura
+
+```
+FASE_1/
+├── platformio.ini
+├── src/
+│   └── main.cpp      # Firmware ESP32 (AP + WebSocket server + HTML embebido)
+└── index.html        # Vista previa del HTML en navegador
+```
+
+## Notas
+
+- La página HTML está embebida directamente en el firmware dentro de `main.cpp`
+- El archivo `index.html` es solo para previsualización local, no se sube al ESP32
+- La IP del ESP32 es siempre `192.168.4.1` en modo Access Point
+- El WebSocket se conecta en `ws://192.168.4.1/ws`

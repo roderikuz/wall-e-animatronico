@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wall-E Control</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #111;
+      margin: 0;
+    }
+    button {
+      padding: 40px 80px;
+      font-size: 28px;
+      background: #f0a500;
+      border: none;
+      border-radius: 16px;
+      color: #111;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <button ontouchstart="enviar('PING')" onmousedown="enviar('PING')">
+    ¡Presionar!
+  </button>
+</body>
+</html>
