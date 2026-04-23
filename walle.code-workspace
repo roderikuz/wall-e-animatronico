@@ -1,5 +1,7 @@
 {
   "folders": [
-    { "path": "." }
+    { "path": "." },
+    { "path": "Fase1" },
+    { "path": "Fase2" }
   ]
 }
