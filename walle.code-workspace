@@ -7,5 +7,7 @@
 			"path": "Fase1"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"workbench.colorTheme": "Dark 2026"
+	}
 }

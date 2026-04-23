@@ -3,18 +3,21 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
-// Credenciales de tu Access Point
+// ─── Credenciales del Access Point ───────────────────────────────────────────
 const char* ssid     = "WallE-Control";
 const char* password = "walle1234";
 
-AsyncWebServer server(80);
-AsyncWebSocket ws("/ws");
+// ─── Servidor web y WebSocket ─────────────────────────────────────────────────
+AsyncWebServer server(80);  // Puerto 80 (HTTP estándar)
+AsyncWebSocket ws("/ws");   // Endpoint del WebSocket
 
-// Página HTML embebida en el firmware
+// ─── Página HTML embebida en el firmware ─────────────────────────────────────
+// Se sirve directamente desde el ESP32 al navegador del celular
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wall-E Control</title>
   <style>
@@ -35,21 +38,26 @@ const char index_html[] PROGMEM = R"rawliteral(
       color: #111;
       cursor: pointer;
       font-weight: bold;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <button ontouchstart="enviar('PING')" onmousedown="enviar('PING')">
+  <button
+    ontouchstart="enviar('PRESS')"   onmousedown="enviar('PRESS')"
+    ontouchend="enviar('RELEASE')"   onmouseup="enviar('RELEASE')">
     ¡Presionar!
   </button>
 
   <script>
+    // Conexión WebSocket apuntando al ESP32 (misma IP que sirvió la página)
     var ws = new WebSocket('ws://' + location.hostname + '/ws');
 
     ws.onopen    = function() { console.log('WebSocket conectado'); };
     ws.onclose   = function() { console.log('WebSocket desconectado'); };
     ws.onerror   = function(e) { console.log('Error: ', e); };
 
+    // Envía un comando al ESP32 si la conexión está abierta
     function enviar(cmd) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(cmd);
@@ -60,9 +68,11 @@ const char index_html[] PROGMEM = R"rawliteral(
 </html>
 )rawliteral";
 
-// Manejador de eventos WebSocket
+// ─── Manejador de eventos WebSocket ──────────────────────────────────────────
+// Se ejecuta cada vez que un cliente se conecta, desconecta o envía un mensaje
 void onWsEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
                AwsEventType type, void* arg, uint8_t* data, size_t len) {
+
   if (type == WS_EVT_CONNECT) {
     Serial.printf("Cliente conectado. ID: %u\n", client->id());
 
@@ -70,17 +80,24 @@ void onWsEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
     Serial.printf("Cliente desconectado. ID: %u\n", client->id());
 
   } else if (type == WS_EVT_DATA) {
-    // Reconstruir el mensaje recibido
+    // Reconstruye el mensaje recibido byte a byte
     String msg = "";
     for (size_t i = 0; i < len; i++) msg += (char)data[i];
-    Serial.println("Comando recibido: " + msg);
+
+    // Muestra en consola el estado del botón
+    if (msg == "PRESS") {
+      Serial.println("Botón presionado");
+    } else if (msg == "RELEASE") {
+      Serial.println("Botón soltado");
+    }
   }
 }
 
+// ─── Configuración inicial ────────────────────────────────────────────────────
 void setup() {
   Serial.begin(115200);
 
-  // Crear Access Point
+  // Crea la red WiFi (Access Point) con las credenciales definidas arriba
   WiFi.softAP(ssid, password);
   Serial.println("\nAccess Point iniciado");
   Serial.print("SSID: ");
@@ -88,11 +105,11 @@ void setup() {
   Serial.print("IP:   ");
   Serial.println(WiFi.softAPIP()); // Normalmente 192.168.4.1
 
-  // Registrar WebSocket en el servidor
+  // Registra el manejador de eventos y agrega el WebSocket al servidor
   ws.onEvent(onWsEvent);
   server.addHandler(&ws);
 
-  // Ruta principal — sirve la página HTML
+  // Ruta principal: sirve la página HTML cuando el celular entra a 192.168.4.1
   server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
     request->send(200, "text/html", index_html);
   });
@@ -101,9 +118,7 @@ void setup() {
   Serial.println("Servidor HTTP iniciado\n");
 }
 
+// ─── Bucle principal ──────────────────────────────────────────────────────────
 void loop() {
-  ws.cleanupClients(); // Limpia conexiones inactivas
+  ws.cleanupClients(); // Libera memoria de conexiones WebSocket inactivas
 }
-
-//Esto es una prueba
-//Esta es una segunda prueba 
