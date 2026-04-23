@@ -1,13 +1,5 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "Fase1"
-		}
-	],
-	"settings": {
-		"workbench.colorTheme": "Dark 2026"
-	}
+  "folders": [
+    { "path": "." }
+  ]
 }
