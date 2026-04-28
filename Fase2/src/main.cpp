@@ -2,7 +2,8 @@
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <ESP32Servo.h>
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 #include "config.h"
 #include "html.h"
 
@@ -10,12 +11,19 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
+// ─── PCA9685 ──────────────────────────────────────────────────────────────────
+Adafruit_PWMServoDriver pca = Adafruit_PWMServoDriver();
+
 // ─── Estado del servo ─────────────────────────────────────────────────────────
-Servo myServo;
 int posActual                  = POS_MIN;
 bool moviendoUp                = false;
 bool moviendoDown              = false;
 unsigned long ultimoMovimiento = 0;
+
+// ─── Convierte grados a valor de pulso para el PCA9685 ───────────────────────
+int gradosAPulso(int grados) {
+  return map(grados, 0, 180, PULSO_MIN, PULSO_MAX);
+}
 
 // ─── Manejador de eventos WebSocket ──────────────────────────────────────────
 void onWsEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
@@ -47,10 +55,14 @@ void onWsEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
 void setup() {
   Serial.begin(115200);
 
-  // Inicializa el servo en posición mínima
-  myServo.attach(SERVO_PIN);
-  myServo.write(POS_MIN);
-  Serial.println("Servo inicializado");
+  // Inicializa I2C con los pines definidos
+  Wire.begin(I2C_SDA, I2C_SCL);
+
+  // Inicializa el PCA9685 y lo coloca en posición mínima
+  pca.begin();
+  pca.setPWMFreq(PWM_FREQ);
+  pca.setPWM(SERVO_CANAL, 0, gradosAPulso(POS_MIN));
+  Serial.println("PCA9685 inicializado");
 
   // Crea la red WiFi (Access Point)
   WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
@@ -85,14 +97,14 @@ void loop() {
     if (moviendoUp && posActual < POS_MAX) {
       posActual += VELOCIDAD;
       if (posActual > POS_MAX) posActual = POS_MAX;
-      myServo.write(posActual);
+      pca.setPWM(SERVO_CANAL, 0, gradosAPulso(posActual));
       ws.textAll(String(posActual));
       Serial.printf("Servo -> %d°\n", posActual);
 
     } else if (moviendoDown && posActual > POS_MIN) {
       posActual -= VELOCIDAD;
       if (posActual < POS_MIN) posActual = POS_MIN;
-      myServo.write(posActual);
+      pca.setPWM(SERVO_CANAL, 0, gradosAPulso(posActual));
       ws.textAll(String(posActual));
       Serial.printf("Servo -> %d°\n", posActual);
     }

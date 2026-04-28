@@ -2,6 +2,7 @@
   "folders": [
     { "path": "." },
     { "path": "Fase1" },
-    { "path": "Fase2" }
+    { "path": "Fase2" },
+    { "path": "FASE_global" }
   ]
 }
