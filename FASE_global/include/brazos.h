@@ -19,10 +19,9 @@ inline int gradosAPulsoBrazo(int grados) {
 // ─── Actualiza posición de brazos en el loop ─────────────────────────────────
 inline void actualizarBrazos(Adafruit_PWMServoDriver& pca) {
   unsigned long ahora = millis();
-  if (ahora - ultimoMovBrazos < VELOCIDAD) return;
+  if (ahora - ultimoMovBrazos < VELOCIDAD_BRAZOS) return;
   ultimoMovBrazos = ahora;
 
-  // Brazo izquierdo (reposo en MAX, sube bajando grados)
   if (brazoIzqSubiendo && posBrazoIzq > BRAZO_IZQ_MIN) {
     posBrazoIzq--;
     pca.setPWM(CANAL_BRAZO_IZQ, 0, gradosAPulsoBrazo(posBrazoIzq));
@@ -31,7 +30,6 @@ inline void actualizarBrazos(Adafruit_PWMServoDriver& pca) {
     pca.setPWM(CANAL_BRAZO_IZQ, 0, gradosAPulsoBrazo(posBrazoIzq));
   }
 
-  // Brazo derecho (reposo en MIN, sube subiendo grados)
   if (brazoDerSubiendo && posBrazoDer < BRAZO_DER_MAX) {
     posBrazoDer++;
     pca.setPWM(CANAL_BRAZO_DER, 0, gradosAPulsoBrazo(posBrazoDer));
