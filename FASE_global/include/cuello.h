@@ -16,7 +16,7 @@ inline int gradosAPulsoCuello(int grados) {
 // ─── Actualiza posición del cuello en el loop ────────────────────────────────
 inline void actualizarCuello(Adafruit_PWMServoDriver& pca) {
   unsigned long ahora = millis();
-  if (ahora - ultimoMovCuello < VELOCIDAD) return;
+  if (ahora - ultimoMovCuello < VELOCIDAD_CUELLO) return;
   ultimoMovCuello = ahora;
 
   if (cuelloIzq && posCuello > CUELLO_MIN) {
