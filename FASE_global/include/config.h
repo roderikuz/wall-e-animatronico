@@ -9,17 +9,20 @@
 #define SERVOMIN   130
 #define SERVOMAX   500
 
-// ─── Velocidad de movimiento (ms entre cada grado) ───────────────────────────
-#define VELOCIDAD  20
+// ─── Velocidades de movimiento (ms entre cada grado) ─────────────────────────
+#define VELOCIDAD_OJOS     15
+#define VELOCIDAD_CUELLO   20
+#define VELOCIDAD_BRAZOS   25
+#define VELOCIDAD_CEJAS    10
 
 // ─── Canales PCA9685 ─────────────────────────────────────────────────────────
-#define CANAL_CUELLO      11
-#define CANAL_CEJA_DER    12
-#define CANAL_CEJA_IZQ    13
-#define CANAL_OJO_DER     14
-#define CANAL_OJO_IZQ     15
-#define CANAL_BRAZO_DER    0
-#define CANAL_BRAZO_IZQ    1
+#define CANAL_CUELLO       11
+#define CANAL_CEJA_DER     12
+#define CANAL_CEJA_IZQ     13
+#define CANAL_OJO_DER      14
+#define CANAL_OJO_IZQ      15
+#define CANAL_BRAZO_DER     0
+#define CANAL_BRAZO_IZQ     1
 
 // ─── Límites ceja izquierda ───────────────────────────────────────────────────
 #define CEJA_IZQ_MIN   0
